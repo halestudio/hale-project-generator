@@ -1,0 +1,114 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+
+repositories {
+  jcenter()
+  maven { // wetransform release repository (HALE releases and Eclipse dependencies)
+    url 'https://artifactory.wetransform.to/artifactory/libs-release-local'
+  }
+  maven { // wetransform snapshot repository (HALE snapshots)
+    url 'https://artifactory.wetransform.to/artifactory/libs-snapshot-local'
+  }
+  maven { // HALE artifactory (dependencies for HALE)
+    url 'http://artifactory.esdi-humboldt.eu/artifactory/libs-release/'
+  }
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+group = 'to.wetransform'
+version = '1.0.0-SNAPSHOT'
+
+project.ext {
+  haleVersion = '2.9.5-SNAPSHOT'
+}
+
+dependencies {
+  compile 'org.slf4j:slf4j-api:1.7.12'
+	
+  // core
+  compile 'eu.esdihumboldt.unpuzzled:org.eclipse.equinox.nonosgi.registry:1.0.0'
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.core:$haleVersion"
+	
+  // resources
+  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource', version: haleVersion)
+  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: '2015.10.27')
+  compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.inspire', version: '2015.10.27')
+	
+  // testing
+  testCompile 'junit:junit:4.12'
+
+  // logging
+  testRuntime 'ch.qos.logback:logback-core:1.1.6'
+  testRuntime 'ch.qos.logback:logback-classic:1.1.6'
+}
+
+/*
+ * Packaging and publishing
+ */
+
+// package javadoc into a jar file
+task packageJavadoc(type: Jar, dependsOn: 'javadoc') {
+  from javadoc.destinationDir
+  classifier = 'javadoc'
+}
+
+// package source into a jar file
+task packageSources(type: Jar) {
+  from sourceSets.main.allSource
+  classifier = 'sources'
+}
+
+// define artifacts for upload
+artifacts {
+  archives jar
+  archives packageJavadoc
+  archives packageSources
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      
+      // upload to wetransform artifactory
+      repository(url: 'https://artifactory.wetransform.to/artifactory/libs-release-local') {
+        authentication(userName: project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : '',
+          password: project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : '')
+      }
+      snapshotRepository(url: 'https://artifactory.wetransform.to/artifactory/libs-snapshot-local') {
+        authentication(userName: project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : '',
+          password: project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : '')
+      }
+
+    }
+  }
+}
+
+/*
+ * Some general project configuration
+ */
+
+configurations.all {
+  // ensure SNAPSHOTs are updated every time if needed
+  resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+// Gradle wrapper
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.12'
+}
+
+// Eclipse configuration
+eclipse {
+  jdt {
+    file {
+      withProperties { properties ->
+        properties['org.eclipse.jdt.core.formatter.indentation.size'] = '2'
+        properties['org.eclipse.jdt.core.formatter.tabulation.size'] = '2'
+        properties['org.eclipse.jdt.core.formatter.tabulation.char'] = 'space'
+      }
+    }
+  }
+}

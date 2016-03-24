@@ -1,5 +1,5 @@
-.gradle
-build/
+/.gradle
+/build/
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -9,3 +9,14 @@ gradle-app.setting
 
 # Cache of project
 .gradletasknamecache
+
+# Java
+/bin/
+
+# Linux
+*~
+
+# Eclipse
+/.classpath
+/.project
+/.settings/
