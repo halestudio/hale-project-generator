@@ -1,4 +1,4 @@
-apply plugin: 'java'
+apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
 
@@ -31,11 +31,16 @@ dependencies {
   // core
   compile 'eu.esdihumboldt.unpuzzled:org.eclipse.equinox.nonosgi.registry:1.0.0'
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.core:$haleVersion"
+  
+  // schema
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.schema:$haleVersion"
 	
   // resources
+  /*
   compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource', version: haleVersion)
   compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.opengis.net', version: '2015.10.27')
   compile(group: 'eu.esdihumboldt.hale', name: 'eu.esdihumboldt.util.resource.schemas.inspire', version: '2015.10.27')
+	*/
 	
   // testing
   testCompile 'junit:junit:4.12'

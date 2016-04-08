@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+xmlns:ef="http://inspire.ec.europa.eu/schemas/ef/4.0" 
+xmlns:om="http://www.opengis.net/om/2.0" 
+xmlns:am="http://inspire.ec.europa.eu/schemas/am/4.0"  
+xmlns:ns1="http://inspire.ec.europa.eu/schemas/test/1.0" 
+targetNamespace="http://inspire.ec.europa.eu/schemas/test/1.0" 
+version="1.0">
+
+
+	<import namespace="http://inspire.ec.europa.eu/schemas/ef/4.0" 
+	schemaLocation="http://inspire.ec.europa.eu/schemas/ef/4.0/EnvironmentalMonitoringFacilities.xsd"/>
+	
+	<import namespace="http://www.opengis.net/om/2.0" 
+	schemaLocation="http://schemas.opengis.net/om/2.0/observation.xsd"/>
+	
+	<import namespace="http://inspire.ec.europa.eu/schemas/am/4.0" 
+	schemaLocation="http://inspire.ec.europa.eu/schemas/am/4.0/AreaManagementRestrictionRegulationZone.xsd"/>
+	
+</schema>
