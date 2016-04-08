@@ -3,6 +3,9 @@ apply plugin: 'eclipse'
 apply plugin: 'maven'
 
 repositories {
+  maven { // Geotools
+    url 'http://download.osgeo.org/webdav/geotools/'
+  }
   jcenter()
   maven { // wetransform release repository (HALE releases and Eclipse dependencies)
     url 'https://artifactory.wetransform.to/artifactory/libs-release-local'
@@ -54,10 +57,21 @@ dependencies {
  * Packaging and publishing
  */
 
-// package javadoc into a jar file
-task packageJavadoc(type: Jar, dependsOn: 'javadoc') {
-  from javadoc.destinationDir
+// package groovydoc into a jar file
+task packageJavadoc(type: Jar, dependsOn: 'groovydoc') {
+  from groovydoc.destinationDir
   classifier = 'javadoc'
+}
+
+// groovydoc task work-around
+configurations {
+  jansi.extendsFrom(runtime)
+}
+groovydoc {
+  groovyClasspath = project.configurations.jansi
+}
+dependencies {
+  jansi 'org.fusesource.jansi:jansi:1.11'
 }
 
 // package source into a jar file
