@@ -13,6 +13,7 @@ import eu.esdihumboldt.hale.common.core.io.project.model.ProjectFile
 import eu.esdihumboldt.hale.common.core.io.report.IOReport;
 import eu.esdihumboldt.hale.common.schema.SchemaSpaceID
 import eu.esdihumboldt.hale.common.schema.io.SchemaIO
+import eu.esdihumboldt.util.io.InputSupplier;
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 import groovy.xml.StreamingMarkupBuilder
@@ -39,72 +40,72 @@ import to.wetf.hale.progen.SchemaDescriptor
 
 @CompileStatic
 class ProjectGeneratorImpl implements ProjectGenerator {
-  
+
   /**
    * Identifier of the XML schema reader.
    */
   private static final String XML_SCHEMA_READER_ID = 'eu.esdihumboldt.hale.io.xsd.reader'
-  
+
   @Override
   public void generateTargetXSDProject(OutputStream outProject, InputStream inTargetXSD, ProjectConfiguration config) {
     initHale()
-    
+
     final GenerationContext context = new GenerationContext()
     try {
-      
+
       // init project object
       final Project project = createProject(config)
-      
+
       // save target schema to temporary file
       File tmpDir = context.createTempDir()
       File tmpSchema = new File(tmpDir, 'target.xsd')
       Files.copy(inTargetXSD, tmpSchema.toPath(), StandardCopyOption.REPLACE_EXISTING)
-      SchemaDescriptor targetInfo = new SchemaDescriptor(location: tmpSchema.toURI()) 
-      
+      SchemaDescriptor targetInfo = new SchemaDescriptor(location: tmpSchema.toURI())
+
       // target schema reader
       IOConfiguration schemaConf = createSchemaConfiguration(
         Collections.singletonList(targetInfo), context)
       project.resources << schemaConf
-      
+
       // save project
       saveProject(project, outProject, 'halez')
-    
+
     } finally {
       context.cleanUp()
     }
   }
-  
+
   @Override
   public void generateTargetXSDProject(OutputStream outProject, Iterable<SchemaDescriptor> targetXSDs, ProjectConfiguration config) {
     initHale()
-    
+
     final GenerationContext context = new GenerationContext()
     try {
-      
+
       // init project object
       final Project project = createProject(config)
-      
+
       // target schema reader
       List<SchemaDescriptor> schemas = []
       targetXSDs.each { schemas << it }
       IOConfiguration schemaConf = createSchemaConfiguration(schemas, context)
       project.resources << schemaConf
-      
+
       // save project
       saveProject(project, outProject, 'halez')
-    
+
     } finally {
       context.cleanUp()
     }
   }
-  
+
   // helper methods
-  
+
   private void initHale() {
     // initialize registry
     RegistryFactoryHelper.getRegistry()
   }
-  
+
   private Project createProject(ProjectConfiguration pc) {
     // create project
     final Project project = new Project()
@@ -113,15 +114,15 @@ class ProjectGeneratorImpl implements ProjectGenerator {
     project.author = pc.projectAuthor ?: 'HALE (generated)'
     project.name = pc.projectName ?: 'Unnamed project'
     project.description = pc.projectDescription
-    
+
     project.haleVersion = Version.parseVersion('2.9.0') //XXX possible to determine?
-    
+
     project.created = new Date()
     project.modified = project.created
-    
+
     // project configuration service
     ComplexConfigurationService config = ProjectIO.createProjectConfigService(project)
-    
+
     // target mapping relevant types
     if (pc.relevantTargetTypes) {
       config.setList(SchemaIO.getMappingRelevantTypesParameterName(SchemaSpaceID.TARGET),
@@ -129,10 +130,10 @@ class ProjectGeneratorImpl implements ProjectGenerator {
           typeName.toString()
         })
     }
-    
+
     project
   }
-  
+
   private IOConfiguration createSchemaConfiguration(List<SchemaDescriptor> schemas,
       GenerationContext context) {
     IOConfiguration result = new IOConfiguration()
@@ -151,7 +152,7 @@ class ProjectGeneratorImpl implements ProjectGenerator {
       String filename = "combined-${shortId}.xsd"
       File tempDir = context.createTempDir()
       File schemaFile = new File(tempDir, filename)
-      
+
       createCombinedSchema(schemaFile, "http://esdi-humboldt.eu/hale/schema-combined-$shortId", schemas)
 
       result.getProviderConfiguration().put(ImportProvider.PARAM_SOURCE,
@@ -180,10 +181,11 @@ class ProjectGeneratorImpl implements ProjectGenerator {
       XmlUtil.serialize(xml, it)
     }
   }
-  
+
   private void saveProject(Project project, OutputStream outProject, String extension) {
     // write project
-    IContentType projectType = HaleIO.findContentType(ProjectWriter.class, null, "project.$extension");
+    InputSupplier<InputStream> input = null
+    IContentType projectType = HaleIO.findContentType(ProjectWriter.class, input, "project.$extension");
     IOProviderDescriptor factory = HaleIO.findIOProviderFactory(ProjectWriter.class, projectType, null);
     ProjectWriter projectWriter;
     try {
