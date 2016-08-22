@@ -13,6 +13,7 @@ import eu.esdihumboldt.hale.common.core.io.project.model.ProjectFile
 import eu.esdihumboldt.hale.common.core.io.report.IOReport;
 import eu.esdihumboldt.hale.common.schema.SchemaSpaceID
 import eu.esdihumboldt.hale.common.schema.io.SchemaIO
+import eu.esdihumboldt.util.io.InputSupplier;
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 import groovy.xml.StreamingMarkupBuilder
@@ -180,10 +181,11 @@ class ProjectGeneratorImpl implements ProjectGenerator {
       XmlUtil.serialize(xml, it)
     }
   }
-  
+
   private void saveProject(Project project, OutputStream outProject, String extension) {
     // write project
-    IContentType projectType = HaleIO.findContentType(ProjectWriter.class, null, "project.$extension");
+    InputSupplier<InputStream> input = null
+    IContentType projectType = HaleIO.findContentType(ProjectWriter.class, input, "project.$extension");
     IOProviderDescriptor factory = HaleIO.findIOProviderFactory(ProjectWriter.class, projectType, null);
     ProjectWriter projectWriter;
     try {
