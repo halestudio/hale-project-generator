@@ -35,10 +35,10 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 group = 'to.wetransform'
-version = '1.0.0-SNAPSHOT'
+version = '1.0.0'
 
 project.ext {
-  haleVersion = '2.9.5-SNAPSHOT'
+  haleVersion = '3.0.0'
 }
 
 dependencies {
