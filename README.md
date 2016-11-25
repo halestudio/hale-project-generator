@@ -34,7 +34,7 @@ The latest version can be added as a dependency like this:
 
 ```groovy
 dependencies {
-  compile 'to.wetransform:hale-project-generator:1.0.0-SNAPSHOT'
+  compile 'to.wetransform:hale-project-generator:1.0.0'
 }
 ```
 
@@ -44,6 +44,6 @@ dependencies {
 <dependency>
     <groupId>to.wetransform</groupId>
     <artifactId>hale-project-generator</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 </dependency>
 ```
