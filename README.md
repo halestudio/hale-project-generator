@@ -1,6 +1,6 @@
 # hale-project-generator
 
-[![Build Status](https://travis-ci.org/wetransform-os/hale-project-generator.svg?branch=master)](https://travis-ci.org/wetransform/hale-project-generator)
+[![Build Status](https://travis-ci.org/halestudio/hale-project-generator.svg?branch=master)](https://travis-ci.org/halestudio/hale-project-generator)
 
 Small Java library that provides an interface for generating HALE projects
 
