@@ -37,6 +37,6 @@ public interface ProjectGenerator {
    * @param config the project configuration with various settings for project
    *   generation
    */
-  public void generateTargetXSDProject(OutputStream outProject, Iterable<SchemaDescriptor> targetXSDs, ProjectConfiguration config);
+  public void generateTargetXSDProject(OutputStream outProject, Iterable<XmlSchemaDescriptor> targetXSDs, ProjectConfiguration config);
 
 }

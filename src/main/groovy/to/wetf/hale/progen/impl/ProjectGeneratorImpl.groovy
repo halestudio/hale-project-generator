@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory
 
 import to.wetf.hale.progen.ProjectConfiguration
 import to.wetf.hale.progen.ProjectGenerator
-import to.wetf.hale.progen.SchemaDescriptor
+import to.wetf.hale.progen.XmlSchemaDescriptor
 
 @CompileStatic
 class ProjectGeneratorImpl implements ProjectGenerator {
@@ -60,7 +60,7 @@ class ProjectGeneratorImpl implements ProjectGenerator {
       File tmpDir = context.createTempDir()
       File tmpSchema = new File(tmpDir, 'target.xsd')
       Files.copy(inTargetXSD, tmpSchema.toPath(), StandardCopyOption.REPLACE_EXISTING)
-      SchemaDescriptor targetInfo = new SchemaDescriptor(location: tmpSchema.toURI())
+      XmlSchemaDescriptor targetInfo = new XmlSchemaDescriptor(location: tmpSchema.toURI())
 
       // target schema reader
       IOConfiguration schemaConf = createSchemaConfiguration(
@@ -76,7 +76,7 @@ class ProjectGeneratorImpl implements ProjectGenerator {
   }
 
   @Override
-  public void generateTargetXSDProject(OutputStream outProject, Iterable<SchemaDescriptor> targetXSDs, ProjectConfiguration config) {
+  public void generateTargetXSDProject(OutputStream outProject, Iterable<XmlSchemaDescriptor> targetXSDs, ProjectConfiguration config) {
     initHale()
 
     final GenerationContext context = new GenerationContext()
@@ -86,7 +86,7 @@ class ProjectGeneratorImpl implements ProjectGenerator {
       final Project project = createProject(config)
 
       // target schema reader
-      List<SchemaDescriptor> schemas = []
+      List<XmlSchemaDescriptor> schemas = []
       targetXSDs.each { schemas << it }
       IOConfiguration schemaConf = createSchemaConfiguration(schemas, context)
       project.resources << schemaConf
@@ -134,7 +134,7 @@ class ProjectGeneratorImpl implements ProjectGenerator {
     project
   }
 
-  private IOConfiguration createSchemaConfiguration(List<SchemaDescriptor> schemas,
+  private IOConfiguration createSchemaConfiguration(List<XmlSchemaDescriptor> schemas,
       GenerationContext context) {
     IOConfiguration result = new IOConfiguration()
     result.actionId = SchemaIO.ACTION_LOAD_TARGET_SCHEMA
@@ -163,7 +163,7 @@ class ProjectGeneratorImpl implements ProjectGenerator {
   }
 
   @CompileStatic(TypeCheckingMode.SKIP)
-  private void createCombinedSchema(File file, targetNamespace, List<SchemaDescriptor> schemas) {
+  private void createCombinedSchema(File file, targetNamespace, List<XmlSchemaDescriptor> schemas) {
     def xmlBuilder = new StreamingMarkupBuilder()
     def xml = xmlBuilder.bind {
       mkp.declareNamespace( xsd: XMLConstants.W3C_XML_SCHEMA_NS_URI )

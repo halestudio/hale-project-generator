@@ -5,7 +5,7 @@ import groovy.transform.CompileStatic;
 
 @CompileStatic
 @Canonical
-class SchemaDescriptor {
+class XmlSchemaDescriptor {
   /**
    * Schema location
    */

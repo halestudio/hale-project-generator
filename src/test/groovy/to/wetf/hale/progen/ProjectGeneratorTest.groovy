@@ -70,8 +70,8 @@ class ProjectGeneratorTest {
     ]
 
     // prepare list of schemas
-    List<SchemaDescriptor> schemas = []
-    schemas << new SchemaDescriptor(
+    List<XmlSchemaDescriptor> schemas = []
+    schemas << new XmlSchemaDescriptor(
       location: URI.create('http://inspire.ec.europa.eu/schemas/hy-p/4.0/HydroPhysicalWaters.xsd'),
       namespace: NS_HYP,
       namespacePrefix: 'hy-p')
@@ -117,12 +117,12 @@ class ProjectGeneratorTest {
     ]
 
     // prepare list of schemas
-    List<SchemaDescriptor> schemas = []
-    schemas << new SchemaDescriptor(
+    List<XmlSchemaDescriptor> schemas = []
+    schemas << new XmlSchemaDescriptor(
       location: URI.create('http://inspire.ec.europa.eu/schemas/hy-p/4.0/HydroPhysicalWaters.xsd'),
       namespace: NS_HYP,
       namespacePrefix: 'hy-p')
-    schemas << new SchemaDescriptor(
+    schemas << new XmlSchemaDescriptor(
       location: URI.create('http://inspire.ec.europa.eu/schemas/hy-n/4.0/HydroNetwork.xsd'),
       namespace: NS_HYN,
       namespacePrefix: 'hy-n')
