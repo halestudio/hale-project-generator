@@ -58,6 +58,7 @@ import org.slf4j.LoggerFactory
 import to.wetf.hale.progen.ProjectConfiguration
 import to.wetf.hale.progen.ProjectGenerator
 import to.wetf.hale.progen.XmlSchemaProjectGenerator
+import to.wetf.hale.progen.schema.BundleMode
 import to.wetf.hale.progen.schema.SchemaDescriptor
 import to.wetf.hale.progen.schema.impl.DefaultSchemaDescriptor
 import to.wetf.hale.progen.schema.xml.XmlSchemaDescriptor
@@ -113,7 +114,7 @@ class ProjectGeneratorImpl implements ProjectGenerator, XmlSchemaProjectGenerato
       File tmpDir = context.createTempDir()
       File tmpSchema = new File(tmpDir, 'target.xsd')
       Files.copy(inTargetXSD, tmpSchema.toPath(), StandardCopyOption.REPLACE_EXISTING)
-      def descriptor = new XmlSchemaDescriptor(tmpSchema.toURI(), true)
+      def descriptor = new XmlSchemaDescriptor(tmpSchema.toURI(), BundleMode.REFERENCE)
 
       // target schema reader
       IOConfiguration schemaConf = createSchemaConfiguration(descriptor, context, SchemaSpaceID.TARGET)
@@ -131,7 +132,7 @@ class ProjectGeneratorImpl implements ProjectGenerator, XmlSchemaProjectGenerato
   public void generateTargetXSDProject(OutputStream outProject, Iterable<XmlSchemaInfo> targetXSDs, ProjectConfiguration config) {
     generateProject(outProject,
       Collections.<SchemaDescriptor>emptyList(),
-      targetXSDs.collect{ XmlSchemaInfo si -> (SchemaDescriptor) new XmlSchemaDescriptor(si.location, true) },
+      targetXSDs.collect{ XmlSchemaInfo si -> (SchemaDescriptor) new XmlSchemaDescriptor(si.location, BundleMode.REFERENCE) },
       config)
   }
 
@@ -210,38 +211,42 @@ class ProjectGeneratorImpl implements ProjectGenerator, XmlSchemaProjectGenerato
 
     def result = schema.createIOConfiguration(ssid)
 
-    if (schema.useLocation) {
-      // reference schema URI
-      result.providerConfiguration.put(ImportProvider.PARAM_SOURCE,
-          Value.of(schema.location.toString()))
-    }
-    else {
-      // bundle schema w/ project (because local files will be included by default)
+    switch (schema.bundleMode) {
+      case BundleMode.REFERENCE:
+        // reference schema URI
+        result.providerConfiguration.put(ImportProvider.PARAM_SOURCE,
+            Value.of(schema.location.toString()))
+        break;
+      default:
+        // bundle schema w/ project (because local files will be included by default)
 
-      def tempDir = context.createTempDir()
+        def tempDir = context.createTempDir()
 
-      String fileName = FilenameUtils.getName(schema.getLocation().getPath().toString())
-      if (!fileName) {
-        fileName = "file";
-      }
-      File newFile = new File(tempDir, fileName)
-      Path target = newFile.toPath()
+        String fileName = FilenameUtils.getName(schema.getLocation().getPath().toString())
+        if (!fileName) {
+          fileName = "file";
+        }
+        File newFile = new File(tempDir, fileName)
+        Path target = newFile.toPath()
 
+        boolean includeRemote = BundleMode.DEEP_COPY == schema.bundleMode
 
-      def contentType = schema.getContentType()
-      def reporter = new DefaultIOReporter(schema.getInputSupplier(), 'Copy resource', 'copy', false)
-      ResourceAdvisor ra = ResourceAdvisorExtension.getInstance().getAdvisor(contentType)
-      ra.copyResource(schema.getInputSupplier(), target, contentType, true, reporter);
+        def contentType = schema.getContentType()
+        def reporter = new DefaultIOReporter(schema.getInputSupplier(), 'Copy resource', 'copy', false)
+        ResourceAdvisor ra = ResourceAdvisorExtension.getInstance().getAdvisor(contentType)
+        ra.copyResource(schema.getInputSupplier(), target, contentType, includeRemote, reporter)
 
-      // reference copied file
-      result.providerConfiguration.put(ImportProvider.PARAM_SOURCE,
-          Value.of(newFile.toURI().toString()))
+        // reference copied file
+        result.providerConfiguration.put(ImportProvider.PARAM_SOURCE,
+            Value.of(newFile.toURI().toString()))
     }
 
     result
   }
 
   private SchemaDescriptor createCombinedXmlSchema(List<SchemaDescriptor> schemas, GenerationContext context) {
+    boolean deep = schemas.any{ it.bundleMode == BundleMode.DEEP_COPY }
+
     def xmlSchemas = schemas.collect{ XmlSchemaHelper.loadInfo(it) }
 
     Collection<String> shortIds = xmlSchemas.findResults { it.namespacePrefix }
@@ -258,7 +263,8 @@ class ProjectGeneratorImpl implements ProjectGenerator, XmlSchemaProjectGenerato
 
     createCombinedSchema(schemaFile, "http://esdi-humboldt.eu/hale/schema-combined-$shortId", xmlSchemas)
 
-    new XmlSchemaDescriptor(schemaFile.toURI(), true)
+    def mode = deep ? BundleMode.DEEP_COPY : BundleMode.COPY
+    new XmlSchemaDescriptor(schemaFile.toURI(), mode)
   }
 
   @CompileStatic(TypeCheckingMode.SKIP)
