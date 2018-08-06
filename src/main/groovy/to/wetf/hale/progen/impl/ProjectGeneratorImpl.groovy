@@ -19,8 +19,10 @@ package to.wetf.hale.progen.impl
 import eu.esdihumboldt.hale.common.core.HalePlatform
 import eu.esdihumboldt.hale.common.core.io.HaleIO
 import eu.esdihumboldt.hale.common.core.io.ImportProvider
+import eu.esdihumboldt.hale.common.core.io.ResourceAdvisor
 import eu.esdihumboldt.hale.common.core.io.Value;
 import eu.esdihumboldt.hale.common.core.io.extension.IOProviderDescriptor
+import eu.esdihumboldt.hale.common.core.io.extension.ResourceAdvisorExtension
 import eu.esdihumboldt.hale.common.core.io.project.ComplexConfigurationService
 import eu.esdihumboldt.hale.common.core.io.project.ProjectIO
 import eu.esdihumboldt.hale.common.core.io.project.ProjectWriter
@@ -28,6 +30,7 @@ import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration;
 import eu.esdihumboldt.hale.common.core.io.project.model.Project
 import eu.esdihumboldt.hale.common.core.io.project.model.ProjectFile
 import eu.esdihumboldt.hale.common.core.io.report.IOReport;
+import eu.esdihumboldt.hale.common.core.io.report.impl.DefaultIOReporter
 import eu.esdihumboldt.hale.common.schema.SchemaSpaceID
 import eu.esdihumboldt.hale.common.schema.io.SchemaIO
 import eu.esdihumboldt.util.io.InputSupplier;
@@ -39,12 +42,13 @@ import groovy.xml.XmlUtil;
 import java.io.InputStream
 import java.io.OutputStream
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.StandardCopyOption;
 import java.util.List
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName
-
+import org.apache.commons.io.FilenameUtils
 import org.eclipse.core.runtime.content.IContentType
 import org.eclipse.equinox.nonosgi.registry.RegistryFactoryHelper;
 import org.osgi.framework.Version
@@ -212,7 +216,26 @@ class ProjectGeneratorImpl implements ProjectGenerator, XmlSchemaProjectGenerato
           Value.of(schema.location.toString()))
     }
     else {
-      //TODO support bundling schema w/ project
+      // bundle schema w/ project (because local files will be included by default)
+
+      def tempDir = context.createTempDir()
+
+      String fileName = FilenameUtils.getName(schema.getLocation().getPath().toString())
+      if (!fileName) {
+        fileName = "file";
+      }
+      File newFile = new File(tempDir, fileName)
+      Path target = newFile.toPath()
+
+
+      def contentType = schema.getContentType()
+      def reporter = new DefaultIOReporter(schema.getInputSupplier(), 'Copy resource', 'copy', false)
+      ResourceAdvisor ra = ResourceAdvisorExtension.getInstance().getAdvisor(contentType)
+      ra.copyResource(schema.getInputSupplier(), target, contentType, true, reporter);
+
+      // reference copied file
+      result.providerConfiguration.put(ImportProvider.PARAM_SOURCE,
+          Value.of(newFile.toURI().toString()))
     }
 
     result

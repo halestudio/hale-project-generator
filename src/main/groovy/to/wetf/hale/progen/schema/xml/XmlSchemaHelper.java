@@ -72,7 +72,12 @@ public class XmlSchemaHelper {
       }
     }
 
-    return new XmlSchemaInfo(schema.getLocation(), namespace, prefix);
+    //XXX canonical constructor fails to compile in Gradle -> use setters
+    XmlSchemaInfo info = new XmlSchemaInfo();
+    info.setLocation(schema.getLocation());
+    info.setNamespace(namespace);
+    info.setNamespacePrefix(prefix);
+    return info;
   }
 
 }

@@ -19,11 +19,15 @@ package to.wetf.hale.progen.schema;
 import java.io.InputStream;
 import java.net.URI;
 
+import org.eclipse.core.runtime.content.IContentType;
+
+import eu.esdihumboldt.hale.common.core.io.HaleIO;
 import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration;
 import eu.esdihumboldt.hale.common.core.io.supplier.DefaultInputSupplier;
+import eu.esdihumboldt.hale.common.core.io.supplier.LocatableInputSupplier;
 import eu.esdihumboldt.hale.common.schema.SchemaSpaceID;
 import eu.esdihumboldt.hale.common.schema.io.SchemaIO;
-import eu.esdihumboldt.util.io.InputSupplier;
+import eu.esdihumboldt.hale.common.schema.io.SchemaReader;
 
 public interface SchemaDescriptor {
 
@@ -33,7 +37,8 @@ public interface SchemaDescriptor {
   static final String XML_SCHEMA_READER_ID = "eu.esdihumboldt.hale.io.xsd.reader";
 
   /**
-   * States if the location from {@link #getLocation()} should be used to reference/load the schema.
+   * States if the location from {@link #getLocation()} should be used to
+   * reference/load the schema (instead of bundling the schema with the project).
    *
    * @return if the location should be used to reference/load the schema
    */
@@ -84,7 +89,7 @@ public interface SchemaDescriptor {
    *
    * @return an input supplier for the schema
    */
-  default InputSupplier<InputStream> getInputSupplier() {
+  default LocatableInputSupplier<InputStream> getInputSupplier() {
     return new DefaultInputSupplier(getLocation());
   }
 
@@ -95,6 +100,15 @@ public interface SchemaDescriptor {
    */
   default boolean isXmlSchema() {
     return XML_SCHEMA_READER_ID.equals(getReaderId());
+  }
+
+  /**
+   * Get the associated content type.
+   *
+   * @return the schema file content type
+   */
+  default IContentType getContentType() {
+    return HaleIO.findContentType(SchemaReader.class, getInputSupplier(), getLocation().getPath());
   }
 
 }
