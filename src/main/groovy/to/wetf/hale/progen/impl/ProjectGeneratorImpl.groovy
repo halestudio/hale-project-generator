@@ -37,15 +37,47 @@ import org.slf4j.LoggerFactory
 
 import to.wetf.hale.progen.ProjectConfiguration
 import to.wetf.hale.progen.ProjectGenerator
-import to.wetf.hale.progen.XmlSchemaDescriptor
+import to.wetf.hale.progen.XmlSchemaProjectGenerator
+import to.wetf.hale.progen.schema.SchemaDescriptor
+import to.wetf.hale.progen.schema.impl.DefaultSchemaDescriptor
+import to.wetf.hale.progen.schema.xml.XmlSchemaDescriptor
+import to.wetf.hale.progen.schema.xml.XmlSchemaHelper
+import to.wetf.hale.progen.schema.xml.XmlSchemaInfo
 
 @CompileStatic
-class ProjectGeneratorImpl implements ProjectGenerator {
+class ProjectGeneratorImpl implements ProjectGenerator, XmlSchemaProjectGenerator {
 
   /**
    * Identifier of the XML schema reader.
    */
   private static final String XML_SCHEMA_READER_ID = 'eu.esdihumboldt.hale.io.xsd.reader'
+
+  @Override
+  public void generateProject(OutputStream outProject, Iterable<SchemaDescriptor> sourceSchemas,
+      Iterable<SchemaDescriptor> targetSchemas, ProjectConfiguration config) {
+    initHale()
+
+    final GenerationContext context = new GenerationContext()
+    try {
+
+      // init project object
+      final Project project = createProject(config)
+
+      // source schemas
+      project.resources.addAll(
+        createSchemaConfigurations(sourceSchemas.toList(), context, SchemaSpaceID.SOURCE))
+
+      // target schemas
+      project.resources.addAll(
+        createSchemaConfigurations(targetSchemas.toList(), context, SchemaSpaceID.TARGET))
+
+      // save project
+      saveProject(project, outProject, 'halez')
+
+    } finally {
+      context.cleanUp()
+    }
+  }
 
   @Override
   public void generateTargetXSDProject(OutputStream outProject, InputStream inTargetXSD, ProjectConfiguration config) {
@@ -61,11 +93,10 @@ class ProjectGeneratorImpl implements ProjectGenerator {
       File tmpDir = context.createTempDir()
       File tmpSchema = new File(tmpDir, 'target.xsd')
       Files.copy(inTargetXSD, tmpSchema.toPath(), StandardCopyOption.REPLACE_EXISTING)
-      XmlSchemaDescriptor targetInfo = new XmlSchemaDescriptor(location: tmpSchema.toURI())
+      def descriptor = new XmlSchemaDescriptor(tmpSchema.toURI(), true)
 
       // target schema reader
-      IOConfiguration schemaConf = createSchemaConfiguration(
-        Collections.singletonList(targetInfo), context)
+      IOConfiguration schemaConf = createSchemaConfiguration(descriptor, context, SchemaSpaceID.TARGET)
       project.resources << schemaConf
 
       // save project
@@ -77,27 +108,11 @@ class ProjectGeneratorImpl implements ProjectGenerator {
   }
 
   @Override
-  public void generateTargetXSDProject(OutputStream outProject, Iterable<XmlSchemaDescriptor> targetXSDs, ProjectConfiguration config) {
-    initHale()
-
-    final GenerationContext context = new GenerationContext()
-    try {
-
-      // init project object
-      final Project project = createProject(config)
-
-      // target schema reader
-      List<XmlSchemaDescriptor> schemas = []
-      targetXSDs.each { schemas << it }
-      IOConfiguration schemaConf = createSchemaConfiguration(schemas, context)
-      project.resources << schemaConf
-
-      // save project
-      saveProject(project, outProject, 'halez')
-
-    } finally {
-      context.cleanUp()
-    }
+  public void generateTargetXSDProject(OutputStream outProject, Iterable<XmlSchemaInfo> targetXSDs, ProjectConfiguration config) {
+    generateProject(outProject,
+      Collections.<SchemaDescriptor>emptyList(),
+      targetXSDs.collect{ XmlSchemaInfo si -> (SchemaDescriptor) new XmlSchemaDescriptor(si.location, true) },
+      config)
   }
 
   // helper methods
@@ -132,39 +147,83 @@ class ProjectGeneratorImpl implements ProjectGenerator {
         })
     }
 
+    // source mapping relevant types
+    if (pc.relevantSourceTypes) {
+      config.setList(SchemaIO.getMappingRelevantTypesParameterName(SchemaSpaceID.SOURCE),
+        pc.relevantSourceTypes.collect{ typeName ->
+          typeName.toString()
+        })
+    }
+
     project
   }
 
-  private IOConfiguration createSchemaConfiguration(List<XmlSchemaDescriptor> schemas,
-      GenerationContext context) {
-    IOConfiguration result = new IOConfiguration()
-    result.actionId = SchemaIO.ACTION_LOAD_TARGET_SCHEMA
-    result.providerId = XML_SCHEMA_READER_ID
+  private List<IOConfiguration> createSchemaConfigurations(List<SchemaDescriptor> schemas,
+    GenerationContext context, SchemaSpaceID ssid) {
 
-    if (schemas.size() == 1) {
-      result.getProviderConfiguration().put(ImportProvider.PARAM_SOURCE,
-          Value.of(schemas[0].location.toString()))
+    def results = []
+    // separate into XML schemas and other schemas
+
+    // XML schemas
+    def xmlSchemas = schemas.findAll{it.isXmlSchema()}
+    if (xmlSchemas) {
+      if (xmlSchemas.size() > 1) {
+        // create combined XML schema
+        SchemaDescriptor schema = createCombinedXmlSchema(xmlSchemas, context)
+        results << createSchemaConfiguration(schema, context, ssid)
+      }
+      else {
+        results << createSchemaConfiguration(xmlSchemas[0], context, ssid)
+      }
+    }
+
+    // not XML schemas
+    schemas.findAll{!it.isXmlSchema()}.each { schema ->
+      results << createSchemaConfiguration(schema, context, ssid)
+    }
+
+    results
+  }
+
+  private IOConfiguration createSchemaConfiguration(SchemaDescriptor schema,
+    GenerationContext context, SchemaSpaceID ssid) {
+
+    def result = schema.createIOConfiguration(ssid)
+
+    if (schema.useLocation) {
+      // reference schema URI
+      result.providerConfiguration.put(ImportProvider.PARAM_SOURCE,
+          Value.of(schema.location.toString()))
     }
     else {
-      // create combined schema
-
-      List<String> shortIds = schemas.collect { it.namespacePrefix }
-      def shortId = shortIds.join('_')
-      String filename = "combined-${shortId}.xsd"
-      File tempDir = context.createTempDir()
-      File schemaFile = new File(tempDir, filename)
-
-      createCombinedSchema(schemaFile, "http://esdi-humboldt.eu/hale/schema-combined-$shortId", schemas)
-
-      result.getProviderConfiguration().put(ImportProvider.PARAM_SOURCE,
-          Value.of(schemaFile.toURI()))
+      //TODO support bundling schema w/ project
     }
 
     result
   }
 
+  private SchemaDescriptor createCombinedXmlSchema(List<SchemaDescriptor> schemas, GenerationContext context) {
+    def xmlSchemas = schemas.collect{ XmlSchemaHelper.loadInfo(it) }
+
+    Collection<String> shortIds = xmlSchemas.findResults { it.namespacePrefix }
+    def shortId
+    if (shortIds) {
+      shortId = shortIds.join('_')
+    }
+    else {
+      shortId = UUID.randomUUID().toString()
+    }
+    String filename = "combined-${shortId}.xsd"
+    File tempDir = context.createTempDir()
+    File schemaFile = new File(tempDir, filename)
+
+    createCombinedSchema(schemaFile, "http://esdi-humboldt.eu/hale/schema-combined-$shortId", xmlSchemas)
+
+    new XmlSchemaDescriptor(schemaFile.toURI(), true)
+  }
+
   @CompileStatic(TypeCheckingMode.SKIP)
-  private void createCombinedSchema(File file, targetNamespace, List<XmlSchemaDescriptor> schemas) {
+  private void createCombinedSchema(File file, targetNamespace, List<XmlSchemaInfo> schemas) {
     def xmlBuilder = new StreamingMarkupBuilder()
     def xml = xmlBuilder.bind {
       mkp.declareNamespace( xsd: XMLConstants.W3C_XML_SCHEMA_NS_URI )

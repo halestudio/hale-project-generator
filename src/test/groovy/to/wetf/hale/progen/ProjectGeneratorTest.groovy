@@ -4,6 +4,7 @@ import javax.xml.namespace.QName
 import org.junit.Test
 
 import to.wetf.hale.progen.impl.ProjectGeneratorImpl
+import to.wetf.hale.progen.schema.xml.XmlSchemaInfo
 
 import static org.junit.Assert.*
 
@@ -70,8 +71,8 @@ class ProjectGeneratorTest {
     ]
 
     // prepare list of schemas
-    List<XmlSchemaDescriptor> schemas = []
-    schemas << new XmlSchemaDescriptor(
+    List<XmlSchemaInfo> schemas = []
+    schemas << new XmlSchemaInfo(
       location: URI.create('http://inspire.ec.europa.eu/schemas/hy-p/4.0/HydroPhysicalWaters.xsd'),
       namespace: NS_HYP,
       namespacePrefix: 'hy-p')
@@ -117,12 +118,12 @@ class ProjectGeneratorTest {
     ]
 
     // prepare list of schemas
-    List<XmlSchemaDescriptor> schemas = []
-    schemas << new XmlSchemaDescriptor(
+    List<XmlSchemaInfo> schemas = []
+    schemas << new XmlSchemaInfo(
       location: URI.create('http://inspire.ec.europa.eu/schemas/hy-p/4.0/HydroPhysicalWaters.xsd'),
       namespace: NS_HYP,
       namespacePrefix: 'hy-p')
-    schemas << new XmlSchemaDescriptor(
+    schemas << new XmlSchemaInfo(
       location: URI.create('http://inspire.ec.europa.eu/schemas/hy-n/4.0/HydroNetwork.xsd'),
       namespace: NS_HYN,
       namespacePrefix: 'hy-n')

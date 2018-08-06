@@ -1,11 +1,11 @@
-package to.wetf.hale.progen
+package to.wetf.hale.progen.schema.xml
 
 import groovy.transform.Canonical;
 import groovy.transform.CompileStatic;
 
 @CompileStatic
 @Canonical
-class XmlSchemaDescriptor {
+class XmlSchemaInfo {
   /**
    * Schema location
    */

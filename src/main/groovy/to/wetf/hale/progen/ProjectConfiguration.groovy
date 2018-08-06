@@ -22,9 +22,14 @@ class ProjectConfiguration {
    * The project description.
    */
   String projectDescription
-  
+
   /**
-   * The names of the target schema types that should are relevant for the mapping.
+   * The names of the source schema types that are relevant for the mapping.
+   */
+  List<QName> relevantSourceTypes = []
+
+  /**
+   * The names of the target schema types that are relevant for the mapping.
    */
   List<QName> relevantTargetTypes = []
 }

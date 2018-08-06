@@ -1,9 +1,9 @@
 package to.wetf.hale.progen;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import to.wetf.hale.progen.impl.ProjectGeneratorImpl;
+import to.wetf.hale.progen.schema.SchemaDescriptor;
 
 public interface ProjectGenerator {
 
@@ -17,26 +17,15 @@ public interface ProjectGenerator {
   }
 
   /**
-   * Generate a HALE project based on a provided target XML Schema.
+   * Generate a HALE project based on the provided source and target schemas.
    *
    * @param outProject the output stream to write the generated project to
-   * @param inTargetXSD the input stream with the content of the single XSD file,
-   *   the XSD depend on external resources, if they are generally accessible
+   * @param sourceSchemas the source schemas
+   * @param targetSchemas the target schemas
    * @param config the project configuration with various settings for project
    *   generation
    */
-  public void generateTargetXSDProject(OutputStream outProject, InputStream inTargetXSD, ProjectConfiguration config);
-
-  /**
-   * Generate a HALE project based on a set of target XML Schemas.
-   *
-   * @param outProject the output stream to write the generated project to
-   * @param targetXSDs descriptors of target XML Schemas at public locations,
-   *   if there are multiple, the namespace and namespace prefix for each descriptor
-   *   is mandatory
-   * @param config the project configuration with various settings for project
-   *   generation
-   */
-  public void generateTargetXSDProject(OutputStream outProject, Iterable<XmlSchemaDescriptor> targetXSDs, ProjectConfiguration config);
+  public void generateProject(OutputStream outProject, Iterable<SchemaDescriptor> sourceSchemas,
+      Iterable<SchemaDescriptor> targetSchemas, ProjectConfiguration config);
 
 }
