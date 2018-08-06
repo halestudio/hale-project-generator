@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 wetransform GmbH
+ * Copyright 2018 wetransform GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,31 +14,21 @@
  * limitations under the License.
  */
 
-package to.wetf.hale.progen.impl;
+package to.wetf.hale.progen.schema.xml;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 
-import eu.esdihumboldt.hale.common.core.io.supplier.LocatableOutputSupplier;
+import to.wetf.hale.progen.schema.impl.DefaultSchemaDescriptor;
 
-public class WriteOnceOutputSupplier implements LocatableOutputSupplier<OutputStream> {
+/**
+ * XML schema descriptor.
+ *
+ * @author Simon Templer
+ */
+public class XmlSchemaDescriptor extends DefaultSchemaDescriptor {
 
-  private final OutputStream out;
-
-  public WriteOnceOutputSupplier(OutputStream out) {
-    super();
-    this.out = out;
-  }
-
-  @Override
-  public OutputStream getOutput() throws IOException {
-    return out;
-  }
-
-  @Override
-  public URI getLocation() {
-    return null;
+  public XmlSchemaDescriptor(URI location, boolean useLocation) {
+    super(location, useLocation, XML_SCHEMA_READER_ID);
   }
 
 }

@@ -3,7 +3,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'org.standardout:gradle-eclipseconfig:1.0.0'
+    classpath 'org.standardout:gradle-eclipseconfig:1.1.0'
   }
 }
 
@@ -16,9 +16,11 @@ plugins {
 apply plugin: 'org.standardout.eclipseconfig'
 
 repositories {
-  maven { // Geotools
-    url 'http://download.osgeo.org/webdav/geotools/'
+  // these need to before jcenter/MavenCentral for retrieving JAI
+  maven {
+    url 'https://artifactory.wetransform.to/artifactory/ext-release-local'
   }
+  
   jcenter()
   maven { // wetransform release repository (HALE releases and Eclipse dependencies)
     url 'https://artifactory.wetransform.to/artifactory/libs-release-local'
@@ -26,8 +28,8 @@ repositories {
   maven { // wetransform snapshot repository (HALE snapshots)
     url 'https://artifactory.wetransform.to/artifactory/libs-snapshot-local'
   }
-  maven { // HALE artifactory (dependencies for HALE)
-    url 'http://artifactory.esdi-humboldt.eu/artifactory/libs-release/'
+  maven { // Geotools
+    url 'http://download.osgeo.org/webdav/geotools/'
   }
 }
 
@@ -35,10 +37,10 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 group = 'to.wetransform'
-version = '1.1.0-SNAPSHOT'
+version = '2.0.0-SNAPSHOT'
 
 project.ext {
-  haleVersion = '3.0.0'
+  haleVersion = '3.4.0'
 }
 
 dependencies {
@@ -131,5 +133,5 @@ configurations.all {
 
 // Gradle wrapper
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.14.1'
+  gradleVersion = '4.9'
 }
