@@ -25,7 +25,7 @@ import to.wetf.hale.progen.schema.xml.XmlSchemaInfo
 import static org.junit.Assert.*
 
 
-class ProjectGeneratorTest {
+class XmlSchemaProjectGeneratorTest {
 
   private static final boolean DELETE_TEST_PROJECTS = true
 
@@ -55,7 +55,7 @@ class ProjectGeneratorTest {
       schemaUrl.openStream().withStream { inTargetXSD ->
 
         // create project generator
-        ProjectGenerator gen = new ProjectGeneratorImpl()
+        XmlSchemaProjectGenerator gen = new ProjectGeneratorImpl()
 
         // run project generation
         gen.generateTargetXSDProject(outProject, inTargetXSD, config)
@@ -101,7 +101,7 @@ class ProjectGeneratorTest {
     projectFile.withOutputStream { outProject ->
 
       // create project generator
-      ProjectGenerator gen = new ProjectGeneratorImpl()
+      XmlSchemaProjectGenerator gen = new ProjectGeneratorImpl()
 
       // run project generation
       gen.generateTargetXSDProject(outProject, schemas, config)
@@ -151,7 +151,7 @@ class ProjectGeneratorTest {
     projectFile.withOutputStream { outProject ->
 
       // create project generator
-      ProjectGenerator gen = new ProjectGeneratorImpl()
+      XmlSchemaProjectGenerator gen = new ProjectGeneratorImpl()
 
       // run project generation
       gen.generateTargetXSDProject(outProject, schemas, config)
