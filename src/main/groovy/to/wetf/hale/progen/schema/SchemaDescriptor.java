@@ -42,7 +42,7 @@ public interface SchemaDescriptor {
    *
    * @return if the location should be used to reference/load the schema
    */
-  boolean isUseLocation();
+  BundleMode getBundleMode();
 
   /**
    * Get the (external) location of the schema.

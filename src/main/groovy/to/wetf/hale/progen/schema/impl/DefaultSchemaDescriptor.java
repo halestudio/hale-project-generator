@@ -21,6 +21,7 @@ import java.net.URI;
 import eu.esdihumboldt.hale.common.core.io.HaleIO;
 import eu.esdihumboldt.hale.common.schema.io.SchemaReader;
 import eu.esdihumboldt.util.Pair;
+import to.wetf.hale.progen.schema.BundleMode;
 import to.wetf.hale.progen.schema.SchemaDescriptor;
 
 /**
@@ -30,17 +31,17 @@ import to.wetf.hale.progen.schema.SchemaDescriptor;
  */
 public class DefaultSchemaDescriptor implements SchemaDescriptor {
 
-  private boolean useLocation;
+  private BundleMode bundleMode;
   private URI location;
   private String readerId;
 
   public DefaultSchemaDescriptor(URI location) {
-    this(location, true, null);
+    this(location, BundleMode.REFERENCE, null);
   }
 
-  public DefaultSchemaDescriptor(URI location, boolean useLocation, String readerId) {
+  public DefaultSchemaDescriptor(URI location, BundleMode bundleMode, String readerId) {
     super();
-    this.useLocation = useLocation;
+    this.bundleMode = bundleMode;
     this.location = location;
 
     if (readerId == null) {
@@ -53,8 +54,8 @@ public class DefaultSchemaDescriptor implements SchemaDescriptor {
   }
 
   @Override
-  public boolean isUseLocation() {
-    return useLocation;
+  public BundleMode getBundleMode() {
+    return bundleMode;
   }
 
   @Override

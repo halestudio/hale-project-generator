@@ -20,6 +20,7 @@ import javax.xml.namespace.QName
 import org.junit.Test
 
 import to.wetf.hale.progen.impl.ProjectGeneratorImpl
+import to.wetf.hale.progen.schema.BundleMode
 import to.wetf.hale.progen.schema.SchemaDescriptor
 import to.wetf.hale.progen.schema.xml.XmlSchemaDescriptor
 
@@ -50,10 +51,10 @@ class ProjectGeneratorTest {
     // prepare list of schemas
     List<SchemaDescriptor> sourceSchemas = []
     sourceSchemas << new XmlSchemaDescriptor(URI.create(
-      'http://inspire.ec.europa.eu/schemas/hy-p/4.0/HydroPhysicalWaters.xsd'), true)
+      'http://inspire.ec.europa.eu/schemas/hy-p/4.0/HydroPhysicalWaters.xsd'), BundleMode.REFERENCE)
     List<SchemaDescriptor> targetSchemas = []
     targetSchemas << new XmlSchemaDescriptor(URI.create(
-      'http://inspire.ec.europa.eu/schemas/hy-p/4.0/HydroPhysicalWaters.xsd'), false)
+      'http://inspire.ec.europa.eu/schemas/hy-p/4.0/HydroPhysicalWaters.xsd'), BundleMode.COPY)
 
     // prepare project configuration
     ProjectConfiguration config = new ProjectConfiguration()

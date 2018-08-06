@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package to.wetf.hale.progen.schema.xml;
-
-import java.net.URI;
-
-import to.wetf.hale.progen.schema.BundleMode;
-import to.wetf.hale.progen.schema.impl.DefaultSchemaDescriptor;
+package to.wetf.hale.progen.schema;
 
 /**
- * XML schema descriptor.
+ * Modes for bundling a file with a project.
  *
  * @author Simon Templer
  */
-public class XmlSchemaDescriptor extends DefaultSchemaDescriptor {
-
-  public XmlSchemaDescriptor(URI location, BundleMode bundleMode) {
-    super(location, bundleMode, XML_SCHEMA_READER_ID);
-  }
-
+public enum BundleMode {
+  /** Only reference the resource */
+  REFERENCE,
+  /** Bundle the file with the project */
+  COPY,
+  /** Bundle the file and all it's referenced files */
+  DEEP_COPY
 }
