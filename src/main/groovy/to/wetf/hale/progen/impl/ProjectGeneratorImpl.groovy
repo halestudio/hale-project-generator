@@ -1,5 +1,6 @@
 package to.wetf.hale.progen.impl
 
+import eu.esdihumboldt.hale.common.core.HalePlatform
 import eu.esdihumboldt.hale.common.core.io.HaleIO
 import eu.esdihumboldt.hale.common.core.io.ImportProvider
 import eu.esdihumboldt.hale.common.core.io.Value;
@@ -115,7 +116,7 @@ class ProjectGeneratorImpl implements ProjectGenerator {
     project.name = pc.projectName ?: 'Unnamed project'
     project.description = pc.projectDescription
 
-    project.haleVersion = Version.parseVersion('2.9.0') //XXX possible to determine?
+    project.haleVersion = Version.parseVersion(HalePlatform.coreVersion.toString())
 
     project.created = new Date()
     project.modified = project.created
