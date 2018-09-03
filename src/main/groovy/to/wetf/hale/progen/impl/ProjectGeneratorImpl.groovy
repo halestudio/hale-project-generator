@@ -20,52 +20,43 @@ import eu.esdihumboldt.hale.common.core.HalePlatform
 import eu.esdihumboldt.hale.common.core.io.HaleIO
 import eu.esdihumboldt.hale.common.core.io.ImportProvider
 import eu.esdihumboldt.hale.common.core.io.ResourceAdvisor
-import eu.esdihumboldt.hale.common.core.io.Value;
+import eu.esdihumboldt.hale.common.core.io.Value
 import eu.esdihumboldt.hale.common.core.io.extension.IOProviderDescriptor
 import eu.esdihumboldt.hale.common.core.io.extension.ResourceAdvisorExtension
 import eu.esdihumboldt.hale.common.core.io.project.ComplexConfigurationService
 import eu.esdihumboldt.hale.common.core.io.project.ProjectIO
 import eu.esdihumboldt.hale.common.core.io.project.ProjectWriter
-import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration;
+import eu.esdihumboldt.hale.common.core.io.project.model.IOConfiguration
 import eu.esdihumboldt.hale.common.core.io.project.model.Project
 import eu.esdihumboldt.hale.common.core.io.project.model.ProjectFile
-import eu.esdihumboldt.hale.common.core.io.report.IOReport;
+import eu.esdihumboldt.hale.common.core.io.report.IOReport
 import eu.esdihumboldt.hale.common.core.io.report.impl.DefaultIOReporter
 import eu.esdihumboldt.hale.common.schema.SchemaSpaceID
 import eu.esdihumboldt.hale.common.schema.io.SchemaIO
-import eu.esdihumboldt.util.io.InputSupplier;
-import groovy.transform.CompileStatic
+import eu.esdihumboldt.util.io.InputSupplier
+import groovy.transform.TypeChecked
 import groovy.transform.TypeCheckingMode
 import groovy.xml.StreamingMarkupBuilder
-import groovy.xml.XmlUtil;
-
-import java.io.InputStream
-import java.io.OutputStream
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.StandardCopyOption;
-import java.util.List
-
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName
+import groovy.xml.XmlUtil
 import org.apache.commons.io.FilenameUtils
 import org.eclipse.core.runtime.content.IContentType
-import org.eclipse.equinox.nonosgi.registry.RegistryFactoryHelper;
+import org.eclipse.equinox.nonosgi.registry.RegistryFactoryHelper
 import org.osgi.framework.Version
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-
 import to.wetf.hale.progen.ProjectConfiguration
 import to.wetf.hale.progen.ProjectGenerator
 import to.wetf.hale.progen.XmlSchemaProjectGenerator
 import to.wetf.hale.progen.schema.BundleMode
 import to.wetf.hale.progen.schema.SchemaDescriptor
-import to.wetf.hale.progen.schema.impl.DefaultSchemaDescriptor
 import to.wetf.hale.progen.schema.xml.XmlSchemaDescriptor
 import to.wetf.hale.progen.schema.xml.XmlSchemaHelper
 import to.wetf.hale.progen.schema.xml.XmlSchemaInfo
 
-@CompileStatic
+import javax.xml.XMLConstants
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.StandardCopyOption
+
+@TypeChecked
 class ProjectGeneratorImpl implements ProjectGenerator, XmlSchemaProjectGenerator {
 
   /**
@@ -267,7 +258,7 @@ class ProjectGeneratorImpl implements ProjectGenerator, XmlSchemaProjectGenerato
     new XmlSchemaDescriptor(schemaFile.toURI(), mode)
   }
 
-  @CompileStatic(TypeCheckingMode.SKIP)
+  @TypeChecked(TypeCheckingMode.SKIP)
   private void createCombinedSchema(File file, targetNamespace, List<XmlSchemaInfo> schemas) {
     def xmlBuilder = new StreamingMarkupBuilder()
     def xml = xmlBuilder.bind {
@@ -287,6 +278,7 @@ class ProjectGeneratorImpl implements ProjectGenerator, XmlSchemaProjectGenerato
     }
   }
 
+  @TypeChecked(TypeCheckingMode.SKIP)
   private void saveProject(Project project, OutputStream outProject, String extension) {
     // write project
     InputSupplier<InputStream> input = null
