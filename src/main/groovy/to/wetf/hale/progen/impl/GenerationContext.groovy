@@ -16,14 +16,13 @@
 
 package to.wetf.hale.progen.impl
 
+import groovy.transform.TypeChecked
+import org.apache.commons.io.FileUtils
+
 import java.nio.file.Files
 import java.nio.file.Path
 
-import org.apache.commons.io.FileUtils;
-
-import groovy.transform.CompileStatic;;
-
-@CompileStatic
+@TypeChecked
 class GenerationContext {
 
   private final List<Path> tempFiles = []
