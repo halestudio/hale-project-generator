@@ -290,8 +290,6 @@ class ProjectGeneratorImpl implements ProjectGenerator, XmlSchemaProjectGenerato
     } catch (Exception e1) {
       throw new IllegalStateException("Failed to create project writer", e1);
     }
-    projectWriter.setProject(project);
-    projectWriter.setProjectFiles(new HashMap<String, ProjectFile>());
     projectWriter.setTarget(new WriteOnceOutputSupplier(outProject));
 
     // store (incomplete) save configuration
@@ -299,6 +297,11 @@ class ProjectGeneratorImpl implements ProjectGenerator, XmlSchemaProjectGenerato
     projectWriter.storeConfiguration(saveConf.getProviderConfiguration());
     saveConf.setProviderId(factory.getIdentifier());
     project.setSaveConfiguration(saveConf);
+
+    SaveProjectAdvisor advisor = new SaveProjectAdvisor(project);
+    // advisor.setServiceProvider(serviceProvider);
+    advisor.prepareProvider(projectWriter)
+    advisor.updateConfiguration(projectWriter)
 
     IOReport report = null;
     try {

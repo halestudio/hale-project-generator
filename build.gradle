@@ -45,13 +45,16 @@ project.ext {
 
 dependencies {
   compile 'org.slf4j:slf4j-api:1.7.12'
-	
+
   // core
   compile 'eu.esdihumboldt.unpuzzled:org.eclipse.equinox.nonosgi.registry:1.0.0'
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.core:$haleVersion"
   
   // schema
   compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.schema:$haleVersion"
+
+  // alignment
+  compile "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.align:$haleVersion"
 	
   // resources
   /*
