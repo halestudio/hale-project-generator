@@ -40,7 +40,7 @@ group = 'to.wetransform'
 version = '2.0.0-SNAPSHOT'
 
 project.ext {
-  haleVersion = '3.4.0'
+  haleVersion = '3.5.0'
 }
 
 dependencies {
