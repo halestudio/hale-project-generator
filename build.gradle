@@ -52,8 +52,8 @@ dependencies {
   testImplementation 'junit:junit:4.12'
 
   // logging
-  testRuntimeOnly 'ch.qos.logback:logback-core:1.2.12'
-  testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.12'
+  testRuntimeOnly 'ch.qos.logback:logback-core:1.2.13'
+  testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.13'
 }
 
 /*
