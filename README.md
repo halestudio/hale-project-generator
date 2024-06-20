@@ -13,28 +13,22 @@ Following is an example configuration for Gradle:
 ```groovy
 repositories {
   maven { // Geotools
-    url 'http://download.osgeo.org/webdav/geotools/'
+    url 'https://repo.osgeo.org/repository/release/'
   }
-  jcenter() // (or Maven Central)
-  maven { // wetransform release repository (HALE releases and Eclipse dependencies)
-    url 'https://artifactory.wetransform.to/artifactory/libs-release-local'
-  }
-  maven { // wetransform snapshot repository (HALE snapshots)
-    url 'https://artifactory.wetransform.to/artifactory/libs-snapshot-local'
-  }
-  maven { // HALE artifactory (dependencies for HALE)
-    url 'http://artifactory.esdi-humboldt.eu/artifactory/libs-release/'
+  mavenCentral()
+  maven { // wetransform repository (HALE and Eclipse dependencies)
+    url 'https://artifactory.wetransform.to/artifactory/local'
   }
 }
 ```
 
-The latest version can be added as a dependency like this:
+It can be added as a dependency like this (replace `<#version>` by the desired version):
 
 **Gradle**
 
 ```groovy
 dependencies {
-  compile 'to.wetransform:hale-project-generator:1.0.0'
+  compile 'to.wetransform:hale-project-generator:<#version>'
 }
 ```
 
@@ -44,6 +38,6 @@ dependencies {
 <dependency>
     <groupId>to.wetransform</groupId>
     <artifactId>hale-project-generator</artifactId>
-    <version>1.0.0</version>
+    <version><#version></version>
 </dependency>
 ```

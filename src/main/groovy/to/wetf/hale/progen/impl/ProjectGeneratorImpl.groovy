@@ -173,7 +173,7 @@ class ProjectGeneratorImpl implements ProjectGenerator, XmlSchemaProjectGenerato
   private List<IOConfiguration> createSchemaConfigurations(List<SchemaDescriptor> schemas,
     GenerationContext context, SchemaSpaceID ssid) {
 
-    def results = []
+    List<IOConfiguration> results = []
     // separate into XML schemas and other schemas
 
     // XML schemas
