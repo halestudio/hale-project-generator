@@ -74,7 +74,7 @@ groovydoc {
   groovyClasspath = project.configurations.jansi
 }
 dependencies {
-  jansi 'org.fusesource.jansi:jansi:1.11'
+  jansi 'org.fusesource.jansi:jansi:2.4.1'
 }
 
 // package source into a jar file
