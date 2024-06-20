@@ -49,7 +49,7 @@ dependencies {
   implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.align:$haleVersion"
 
   // testing
-  testImplementation 'junit:junit:4.12'
+  testImplementation 'junit:junit:4.13.2'
 
   // logging
   testRuntimeOnly 'ch.qos.logback:logback-core:1.2.12'
