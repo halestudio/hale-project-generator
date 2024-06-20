@@ -84,8 +84,8 @@ publishing {
   repositories {
     maven {
       url = project.version.endsWith('-SNAPSHOT') ?
-        'https://artifactory.wetransform.to/artifactory/private-snapshot-local' :
-        'https://artifactory.wetransform.to/artifactory/private-release-local'
+        'https://artifactory.wetransform.to/artifactory/libs-snapshot-local' :
+        'https://artifactory.wetransform.to/artifactory/libs-release-local'
       credentials {
         username project.hasProperty('wetfArtifactoryUser') ? wetfArtifactoryUser : ''
         password project.hasProperty('wetfArtifactoryPassword') ? wetfArtifactoryPassword : ''
