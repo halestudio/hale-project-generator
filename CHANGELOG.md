@@ -1,3 +1,20 @@
+## [4.0.0](https://github.com/halestudio/hale-project-generator/compare/v3.0.0...v4.0.0) (2024-09-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* update hale to version 6
+
+### Features
+
+* update hale to version 6 ([7b8b213](https://github.com/halestudio/hale-project-generator/commit/7b8b2138bde46709b7fcf57a97e8b1a408a93aaa))
+
+
+### Bug Fixes
+
+* **deps:** update hale dependencies to v5.2.1 ([8babb25](https://github.com/halestudio/hale-project-generator/commit/8babb25662b768207ac3a43b943a01502141a3a9))
+* **deps:** update hale dependencies to v5.3.0 ([10eb960](https://github.com/halestudio/hale-project-generator/commit/10eb9605fa30e00ba4f1af6bcfce24242bec24c0))
+
 ## [3.0.0](https://github.com/halestudio/hale-project-generator/compare/v2.0.0...v3.0.0) (2024-06-20)
 
 
