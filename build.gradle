@@ -32,28 +32,35 @@ java {
 group = 'to.wetransform'
 
 project.ext {
-  haleVersion = '5.3.0'
+  haleVersion = '6.0.0'
 }
 
 dependencies {
-  implementation 'org.slf4j:slf4j-api:1.7.36'
+  // BOM
+  implementation(platform("eu.esdihumboldt.hale:bom:$haleVersion"))
+
+  implementation 'org.slf4j:slf4j-api'
+  implementation 'commons-io:commons-io'
 
   // core
-  implementation 'eu.esdihumboldt.unpuzzled:org.eclipse.equinox.nonosgi.registry:1.0.0'
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.core:$haleVersion"
+  implementation 'eu.esdihumboldt.hale:org.eclipse.equinox.nonosgi.registry'
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.core"
 
   // schema
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.schema:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.schema"
 
   // alignment
-  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.align:$haleVersion"
+  implementation "eu.esdihumboldt.hale:eu.esdihumboldt.hale.common.align"
+
+  // Groovy
+  implementation 'org.codehaus.groovy:groovy-xml'
 
   // testing
   testImplementation 'junit:junit:4.13.2'
 
   // logging
-  testRuntimeOnly 'ch.qos.logback:logback-core:1.2.13'
-  testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.13'
+  testRuntimeOnly 'ch.qos.logback:logback-core'
+  testRuntimeOnly 'ch.qos.logback:logback-classic'
 }
 
 /*
