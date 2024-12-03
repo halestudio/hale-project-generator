@@ -32,7 +32,7 @@ java {
 group = 'to.wetransform'
 
 project.ext {
-  haleVersion = '6.1.0'
+  haleVersion = '6.2.0'
 }
 
 dependencies {
