@@ -113,5 +113,5 @@ configurations.all {
 // Gradle wrapper
 tasks.wrapper {
   distributionType = Wrapper.DistributionType.ALL
-  gradleVersion = '9.2.0'
+  gradleVersion = '9.2.1'
 }
